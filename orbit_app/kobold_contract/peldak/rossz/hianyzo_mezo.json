@@ -1,0 +1,14 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "0000001c-0000-4000-8000-00000000001c",
+ "time": "2026-11-11T15:08:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "info",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "text": "x"
+ },
+ "sig": "e2f0fe617f9aff80d4a8f2057e43204c0aa195d83d40cd5ba2eeb4c74996f3a8"
+}

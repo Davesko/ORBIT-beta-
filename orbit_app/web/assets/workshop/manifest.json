@@ -1,0 +1,95 @@
+{
+  "tool": "Built-in imagegen",
+  "mode": "generated project assets; copied into workspace without creative postprocessing",
+  "references": [
+    "exec-bb756e6f-1df3-41ae-b3da-bc94e2cda0e5.png",
+    "exec-c400905b-0d88-49b9-8eae-5dff52bc3385.png"
+  ],
+  "prompts": {
+    "environment": "Warm handcrafted pixel-art physical office. Separate seamless wood floor, transparent three-monitor wooden editing workstation, single-monitor research desk with book/papers/coffee, tall wooden bookcase. No people or text. Match the selected Quiet Pixel Workshop reference.",
+    "characters": "Separate isolated full-body transparent pixel characters, neutral front-facing pose, complete silhouettes, limited palette and amber/cyan eyes; green purple-hooded goblin, white cyan-eyed robot, violet wizard, ice-blue fox, charcoal hooded hacker, white astronaut, dark violet samurai, purple jellyfish, sage-green little dragon. Match the selected reference identity and style."
+  },
+  "preserved_art": [
+    "Existing electric mouse, raven, operator and hologram variants remain selectable; no type or user assignment was removed."
+  ],
+  "files": {
+    "agent-wizard.png": {
+      "width": 1122,
+      "height": 1402,
+      "sha256": "96e5f1ef4c5123279d4f4e296aa53980297fe5147484334fff858e328ad18c52",
+      "mode": "RGBA"
+    },
+    "desk-editing.png": {
+      "width": 1774,
+      "height": 887,
+      "sha256": "c353ca626cdbab0478057091f5055e405bc8c67fc178e384eb5fb1511410fb0e",
+      "mode": "RGBA"
+    },
+    "agent-dragon.png": {
+      "width": 1122,
+      "height": 1402,
+      "sha256": "39eef8cf75727edf77f08a6904b9888a0a80dd744f8eb36497dc016ae1f4b114",
+      "mode": "RGBA"
+    },
+    "agent-astronaut.png": {
+      "width": 1086,
+      "height": 1448,
+      "sha256": "feacf4709928fd925952e7d43fd54186d2d39f3b76f5147f5b20b2a18c94cae7",
+      "mode": "RGBA"
+    },
+    "agent-fox.png": {
+      "width": 1196,
+      "height": 1315,
+      "sha256": "63a55e56702d5e2737cca1b1a5175b6cf2a39e26d2567dfe41335b42344b42ed",
+      "mode": "RGBA"
+    },
+    "agent-hacker.png": {
+      "width": 1086,
+      "height": 1448,
+      "sha256": "104ff4d0c82cbaf5250fa5a9943a6a55de1cbd560131de14596ad96dc912b110",
+      "mode": "RGBA"
+    },
+    "agent-jellyfish.png": {
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3f7a235b8d90714ffad5262a24e490eeb164106be8d0c8f72e549d8b0638af12",
+      "mode": "RGBA"
+    },
+    "floor-wood.png": {
+      "width": 1254,
+      "height": 1254,
+      "sha256": "7edf9520f59960a3ad61ace4c739371b734f5bf08fbb062fcf1fe3fc76e1ca18",
+      "mode": "RGB"
+    },
+    "desk-research.png": {
+      "width": 1484,
+      "height": 1060,
+      "sha256": "8d136318ed0180b1b3037a87795a823aba522676d88b1db03fb208acf75ab525",
+      "mode": "RGBA"
+    },
+    "agent-robot.png": {
+      "width": 1196,
+      "height": 1315,
+      "sha256": "5ed1b448a9d0e7f234f5131e208f82f1c864876a83883baccc764080f35e98ce",
+      "mode": "RGBA"
+    },
+    "agent-samurai.png": {
+      "width": 1122,
+      "height": 1402,
+      "sha256": "8043f4bc76440383b4878eb304dc1e3378676459952097a40ca1203e1eeaa3f1",
+      "mode": "RGBA"
+    },
+    "bookshelf.png": {
+      "width": 1052,
+      "height": 1495,
+      "sha256": "35ad3e2e4121faef53dd39ccba273a5a5c5ddaa5a40108f3a15ce299b13b595f",
+      "mode": "RGBA"
+    },
+    "agent-goblin.png": {
+      "width": 1122,
+      "height": 1402,
+      "sha256": "366ffaca6b3ce03c64bdc7658307a1406167260f3ec03ebebacde75d46ed19af",
+      "mode": "RGBA"
+    }
+  }
+}

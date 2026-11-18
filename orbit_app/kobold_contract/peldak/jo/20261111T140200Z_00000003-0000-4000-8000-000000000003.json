@@ -1,0 +1,42 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000003-0000-4000-8000-000000000003",
+ "time": "2026-11-11T14:02:00Z",
+ "from": "orbit",
+ "to": "kobold",
+ "type": "skill",
+ "reply_to": null,
+ "title": "Időjárás kulcs nélkül",
+ "body": {
+  "skill_id": "open-meteo-weather",
+  "kind": "data",
+  "summary": "Aktuális időjárás és előrejelzés koordináta alapján, kulcs nélkül.",
+  "examples": [
+   "Milyen idő lesz holnap Budapesten?"
+  ],
+  "api": {
+   "base": "https://api.open-meteo.com",
+   "auth": {
+    "kind": "none"
+   },
+   "endpoints": [
+    {
+     "path": "/v1/forecast",
+     "params": [
+      "latitude",
+      "longitude",
+      "current"
+     ],
+     "description": "aktuális és órás előrejelzés"
+    }
+   ]
+  },
+  "evidence": {
+   "tests_passed": 1,
+   "used": 4,
+   "since": "2026-11-09"
+  },
+  "version": 1
+ },
+ "sig": "c5f5b22660074a40e6f2d4b24ab531bb21cb1326e03ef7cdbe9008802e3e3999"
+}

@@ -1,0 +1,34 @@
+/* Reference: quiet sidebar, centered dialogue, restrained message cards. */
+html[data-theme] .command-app{position:relative;isolation:isolate}
+html[data-theme] .command-atmosphere{inset:0;overflow:hidden;z-index:-1;opacity:.3!important;background:none!important;animation:none!important}
+.command-atmosphere::before,.command-atmosphere::after{content:'';position:absolute;inset:-60px;pointer-events:none;background-image:radial-gradient(circle,var(--theme-muted) 1px,transparent 1.7px);background-size:151px 137px;animation:orbit-particles 47s linear infinite!important;opacity:.35}
+.command-atmosphere::after{background-size:239px 193px;animation-duration:73s!important;animation-direction:reverse!important;opacity:.22}
+@keyframes orbit-particles{from{transform:translate(0,0)}to{transform:translate(151px,-137px)}}
+html[data-motion=off] .command-atmosphere::before,html[data-motion=off] .command-atmosphere::after{animation:none!important}
+@media(prefers-reduced-motion:reduce){.command-atmosphere::before,.command-atmosphere::after{animation:none!important}}
+html[data-theme] .command-messages{width:min(100%,900px);margin:0 auto}
+html[data-theme] .command-turn-group{margin:0 auto 28px;max-width:900px}
+html[data-theme] .command-turn.assistant{background:var(--theme-deep)!important;border:1px solid var(--theme-line)!important;padding:20px 24px!important;border-radius:22px 22px 22px 6px!important;line-height:1.7;box-shadow:none!important}
+html[data-theme] .command-turn.user{background:var(--theme-surface)!important;border-radius:22px 22px 6px 22px!important;margin-left:auto;max-width:78%;padding:16px 20px!important}
+html[data-theme] .command-composer{border-radius:20px!important;background:var(--theme-deep)!important;border:1px solid var(--theme-line)!important;box-shadow:none!important}
+html[data-theme] .command-composer textarea{background:transparent!important;border:0!important;min-height:64px}
+.command-turn-heading{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.reply-stream{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.stream-label{display:block;margin-bottom:8px}
+.finder-search-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.finder-search-actions button{min-height:42px}
+#finderApp .finder-grid{grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}
+.finder-search-actions [aria-pressed="true"]{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
+@media(max-width:700px){html[data-theme] .command-turn.assistant{padding:16px!important}html[data-theme] .command-turn.user{max-width:90%}}
+
+.command-progress-line{display:flex;align-items:center;gap:.55rem;color:var(--muted);margin:.35rem 0 .55rem}
+.command-progress-dot{width:.45rem;height:.45rem;flex:none;border-radius:50%;background:var(--accent);animation:orbit-chat-pulse 1.5s ease-in-out infinite alternate}
+.reply-stream:empty{display:none}
+@keyframes orbit-chat-pulse{from{opacity:.35}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.command-progress-dot{animation:none}}
+
+.command-app.assistant-overlay{padding-right:0!important}.assistant-overlay .canvas-panel{display:none!important}
+/* Agent chat: the owner's messages sit on the right as their own bubble, the agent's replies on the left, as in the main assistant. */
+html[data-theme] .chat-log{display:flex;flex-direction:column}
+html[data-theme] .chat-log .message{max-width:88%!important;margin:6px 0 14px!important;padding:13px 16px!important}
+html[data-theme] .chat-log .message.user{align-self:flex-end;margin-left:auto!important;background:var(--theme-surface)!important;border:1px solid rgba(var(--accent-rgb),.45)!important;border-radius:18px 18px 6px 18px!important}
+html[data-theme] .chat-log .message.assistant{align-self:flex-start;margin-right:auto!important;background:var(--theme-deep)!important;border:1px solid var(--theme-line)!important;border-radius:18px 18px 18px 6px!important}
+html[data-theme] .chat-log .message.user .label{text-align:right;color:rgba(var(--accent-rgb),.9)!important}
+html[data-theme] .chat-log .message:not(.user):not(.assistant){align-self:stretch;max-width:100%!important}

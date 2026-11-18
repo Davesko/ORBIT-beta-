@@ -1,0 +1,15 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000006-0000-4000-8000-000000000006",
+ "time": "2026-11-11T14:05:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "question",
+ "reply_to": null,
+ "title": "Időjárás-skill?",
+ "body": {
+  "text": "Van skilled időjárásra, ami kulcs nélkül működik?",
+  "origin": "user"
+ },
+ "sig": "d9bc832463fac1d25cfa6a79101fe512c7f3f29e96db0dc9be414ce7fef616fe"
+}

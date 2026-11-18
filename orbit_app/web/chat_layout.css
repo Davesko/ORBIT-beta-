@@ -1,0 +1,72 @@
+/* Shared chat controls use explicit geometry; generic secondary-button margins do not apply. */
+.command-topline{display:flex;align-items:center;flex-wrap:wrap;gap:12px;min-width:0;flex:0 0 auto;padding:20px 24px}
+.command-topline>.eyebrow{flex:1 1 180px;min-width:0;line-height:1.5}
+.assistant-controls{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;min-width:0;max-width:100%;margin:0}
+.assistant-controls>button{flex:0 0 auto;height:38px;min-height:38px;max-width:100%;margin:0!important;padding:8px 12px;font-size:12px;line-height:1.2;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;box-sizing:border-box}
+.assistant-controls #commandScope{max-width:none;border-radius:7px}
+.assistant-controls #assistantClose{display:none;width:38px;padding:0;font-size:23px}
+.assistant-overlay .assistant-controls #assistantClose{display:inline-flex}
+.assistant-local{border:1px solid var(--atelier-line,#443d56);border-radius:7px;background:var(--theme-deep,#1a1725);color:var(--theme-text,#ddd6ed);font-weight:550}
+.assistant-local .ai-policy-state{font-size:10px;letter-spacing:.04em;opacity:.8}
+.assistant-controls .assistant-local[aria-pressed=true]{background:var(--accent)!important;border-color:var(--accent)!important;color:#1b1329!important}
+.assistant-local:disabled{opacity:.65;cursor:wait}
+.assistant-controls>button:focus-visible,.command-composer-tools>*:focus-visible,.rail-button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.command-app .command-compose-area{width:min(850px,calc(100% - 48px));max-width:100%;margin:12px auto 20px;flex:0 0 auto;min-width:0}
+.command-composer{padding:16px;min-width:0;box-sizing:border-box}
+.command-composer textarea{display:block;box-sizing:border-box;min-width:0;width:100%;padding:0;resize:vertical;min-height:54px;max-height:180px}
+.command-composer-tools{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:10px;margin-top:12px;min-width:0}
+.command-composer-tools #commandAttach,.command-composer-tools #commandSend{display:grid;place-items:center;box-sizing:border-box;width:40px;height:40px;min-height:40px;margin:0!important;padding:0!important;line-height:1;font-size:24px;border-radius:7px}
+.command-composer-tools #commandAttach{grid-column:1;background:transparent;border:1px solid var(--atelier-line,#443d56);color:var(--atelier-muted,#b5afca)}
+.command-composer-tools #commandModel{grid-column:2;width:100%;max-width:100%;min-width:0;box-sizing:border-box;min-height:40px;margin:0;padding:8px 24px 8px 8px;font-size:12px;text-overflow:ellipsis}
+.command-composer-tools .command-local{display:none}
+.command-composer-tools #commandSend{grid-column:3;justify-self:end}
+.command-scroll{min-width:0;min-height:0;overflow-x:hidden;overscroll-behavior:contain}
+.command-app .command-footnote{font-size:10px!important;max-width:100%;overflow-wrap:anywhere;line-height:1.5}
+#commandApp.assistant-overlay{top:calc(var(--header-height,80px) + 12px)!important;left:50%!important;width:min(940px,calc(100vw - 32px))!important;height:min(790px,calc(100dvh - var(--header-height,80px) - 24px))!important;max-height:calc(100dvh - var(--header-height,80px) - 24px);box-sizing:border-box}
+.assistant-overlay .command-topline{padding:16px 20px}
+.assistant-overlay .command-compose-area{margin-bottom:14px}
+
+/* Sidebar labels are independent of the original icon span font sizing. */
+.app-rail{align-items:stretch;gap:8px;scrollbar-width:thin}
+.app-rail .rail-button{flex:0 0 auto;justify-content:flex-start;min-width:0;overflow:visible;overflow-wrap:normal}
+.app-rail .rail-button>.rail-icon{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;margin:0;line-height:1}
+.app-rail .rail-button>.rail-label,.app-rail .rail-button>.rail-short-label{display:block;flex:1 1 auto;min-width:0;width:auto;height:auto;margin:0;font:inherit;letter-spacing:inherit;line-height:1.3;text-align:left}
+.app-rail .rail-button>.rail-short-label{display:none}
+.app-rail .rail-settings{margin-top:auto!important}
+@media(max-width:1000px){
+ .app-rail .rail-button{justify-content:center;gap:6px}
+ .app-rail .rail-button>.rail-icon{flex:0 0 24px}
+ .app-rail .rail-button>.rail-label,.app-rail .rail-button>.rail-short-label{flex:0 0 auto;max-width:100%;text-align:center;font-size:9px;white-space:nowrap}
+ .app-rail .has-short-label>.rail-label{display:none}
+ .app-rail .has-short-label>.rail-short-label{display:block}
+ body>header .guardian-trigger{width:180px!important}
+}
+@media(max-width:800px){
+ body>header{gap:12px;padding-left:16px;padding-right:16px}
+ body>header .guardian-trigger{left:auto!important;right:12px!important;width:100px!important;transform:none!important}
+ body>header .guardian-trigger img{width:190px!important;height:142.5px!important;left:calc(50% - 95px)!important;top:-43px!important}
+ .project-switch{max-width:190px}
+ .command-topline{padding:14px 16px;gap:10px}
+ .command-topline>.eyebrow{display:block;flex-basis:100%;font-size:10px!important}
+ .assistant-controls{flex:1 1 100%;justify-content:flex-start}
+ .command-app .command-compose-area{width:calc(100% - 28px);margin-bottom:12px}
+ .command-composer-tools{gap:8px}
+ .command-footnote{font-size:9px}
+}
+@media(max-width:520px){
+ body>header{gap:8px;padding-left:12px;padding-right:12px}
+ body>header .guardian-trigger{width:80px!important;right:8px!important}
+ .app-rail .rail-button>.rail-label,.app-rail .rail-button>.rail-short-label{font-size:8px}
+ .command-topline,.assistant-overlay .command-topline{padding:12px}
+ .assistant-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;width:100%;gap:7px}
+ .assistant-controls #commandScope{grid-column:1;justify-self:stretch;font-size:11px;padding:7px 8px}
+ .assistant-controls .assistant-health-button{grid-column:2;font-size:11px;padding:7px 9px}
+ .assistant-controls #assistantClose{grid-column:3;grid-row:1}
+ .assistant-controls #assistantLocal{grid-row:2;grid-column:1/-1;width:100%}
+ .command-composer{padding:12px}
+ .command-composer textarea{font-size:14px;min-height:54px}
+ .command-composer-tools #commandModel{font-size:11px;padding-left:2px}
+ #commandApp.assistant-overlay{width:calc(100vw - 20px)!important}
+ .command-app .command-footnote{display:none}
+ .command-welcome h1{font-size:28px!important}
+}

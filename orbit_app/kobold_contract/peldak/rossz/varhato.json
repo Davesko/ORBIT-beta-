@@ -1,0 +1,14 @@
+{
+ "hibas_alairas.json": "hibás aláírás",
+ "ismeretlen_verzio.json": "ismeretlen protokoll",
+ "kod_a_skillben.json": "ismeretlen mező 'code'",
+ "kulcs_az_apiban.json": "ismeretlen mező 'key'",
+ "titok_a_szovegben.json": "API-kulcs",
+ "email_a_szovegben.json": "e-mail",
+ "utvonal_a_szovegben.json": "felhasználói útvonal",
+ "valasz_reply_to_nelkul.json": "reply_to",
+ "hianyzo_mezo.json": "hiányzik a(z) 'category'",
+ "tul_hosszu_szoveg.json": "hosszabb",
+ "tul_nagy_fajl.json": "túl nagy",
+ "rossz_fajlnev.json": "fájlnév"
+}

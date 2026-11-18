@@ -1,0 +1,121 @@
+/* ORBIT workshop life (2026-11-12): clean, game-like map. Motion stops with the app's motion switch or reduced motion. */
+
+/* Rooms: a soft accent outline on hover, like a selectable map tile. */
+.pl-room{cursor:pointer}
+.pl-room .pl-glow{transition:opacity .18s ease}
+.pl-room:hover .pl-glow,.pl-room:focus-visible .pl-glow{opacity:.75}
+.pl-room:focus{outline:none}
+
+/* Room nameplates: one clean pill, an icon, the head count and a delete button that is always reachable. */
+.pl-label{cursor:pointer}
+.pl-label .pl-label-bg{fill:rgba(12,14,24,.9);stroke:rgba(255,255,255,.14);stroke-width:1;transition:stroke .15s ease}
+.pl-label:hover .pl-label-bg,.pl-label:focus-visible .pl-label-bg{stroke:var(--accent)}
+.pl-label:focus{outline:none}
+.pl-label .pl-label-icon{font-size:11px;fill:#fff}
+.pl-label .pl-label-name{fill:#eeeaf6!important;font:650 12px -apple-system,BlinkMacSystemFont,sans-serif!important;letter-spacing:.01em}
+.pl-label .pl-label-count rect{fill:color-mix(in srgb,var(--accent) 26%,#12131c);stroke:none}
+.pl-label .pl-label-count text{fill:#f5f2ff!important;font:700 9.5px -apple-system,BlinkMacSystemFont,sans-serif!important}
+.pl-room-del{cursor:pointer;opacity:.5;transition:opacity .15s ease,transform .15s ease}
+.pl-room-del rect{fill:rgba(12,14,24,.9);stroke:rgba(255,255,255,.18)}
+.pl-room-del path{stroke:#f2b8b0}
+.pl-label:hover .pl-room-del,.pl-room-del:focus-visible{opacity:1}
+.pl-room-del:hover rect,.pl-room-del:focus-visible rect{fill:#5a1f2a;stroke:#ff8f8f}
+.pl-room-del:hover path{stroke:#fff}
+.pl-room-del:focus{outline:none}
+
+/* Characters: crisp nameplates; a working character's plate carries the accent. */
+.sprite>rect:nth-of-type(3){fill:rgba(10,12,20,.88)!important;stroke:rgba(255,255,255,.12);stroke-width:1}
+.sprite.pl-working>rect:nth-of-type(3){stroke:var(--accent);stroke-width:1.4}
+.sprite .selection{stroke-dasharray:5 4;animation:pl-march 1.2s linear infinite}
+.sprite:hover .figure,.sprite:focus-visible .figure{filter:brightness(1.12) drop-shadow(0 0 4px rgba(var(--accent-rgb),.55))}
+.sprite:focus{outline:none}
+@keyframes pl-march{to{stroke-dashoffset:-18}}
+
+/* Emote bubbles pop in above the head for a few seconds. */
+.pl-bubble{pointer-events:none}
+.pl-bubble rect{fill:#fbfaff;stroke:#151622;stroke-width:1.5}
+.pl-bubble path{fill:#fbfaff;stroke:#151622;stroke-width:1.2}
+.pl-bubble text{font-size:12px}
+.pl-bubble.pop>g{animation:pl-pop .34s cubic-bezier(.2,1.6,.4,1) both;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes pl-pop{from{transform:translate(0,-76px) scale(.2);opacity:0}to{transform:translate(0,-76px) scale(1);opacity:1}}
+
+/* Props and effects. */
+.pl-smoke{fill:#d8dbe6;opacity:0;animation:pl-smoke 2.7s ease-out infinite}
+.pl-smoke.s2{animation-delay:.9s}.pl-smoke.s3{animation-delay:1.8s}
+@keyframes pl-smoke{0%{transform:translate(0,0) scale(.6);opacity:.65}100%{transform:translate(5px,-22px) scale(2.2);opacity:0}}
+.pl-smoke{transform-box:fill-box;transform-origin:center}
+.pl-ember{animation:pl-ember 1.4s ease-in-out infinite}
+@keyframes pl-ember{0%,100%{fill:#f29a5c}50%{fill:#ffd36b}}
+.pl-steam{animation:pl-steam 2s ease-in-out infinite}
+@keyframes pl-steam{0%,100%{opacity:.15;transform:translateY(0)}50%{opacity:.7;transform:translateY(-2px)}}
+.pl-cube rect[class^=c]{animation:pl-cube 3s steps(1) infinite}
+.pl-cube .c0{fill:#f2c14e}.pl-cube .c1{fill:#2fb3e0;animation-delay:-.5s}.pl-cube .c2{fill:#d64b3a;animation-delay:-1s}
+.pl-cube .c3{fill:#8fdc4a;animation-delay:-1.5s}.pl-cube .c4{fill:#e9e6f0;animation-delay:-2s}.pl-cube .c5{fill:#f29a5c;animation-delay:-2.5s}
+@keyframes pl-cube{0%{fill:#f2c14e}16%{fill:#2fb3e0}33%{fill:#d64b3a}50%{fill:#8fdc4a}66%{fill:#e9e6f0}83%{fill:#f29a5c}}
+.pl-cube{transform-box:fill-box;transform-origin:center;animation:pl-twist .5s ease-in-out infinite alternate}
+@keyframes pl-twist{to{transform:rotate(10deg)}}
+.pl-pad{animation:pl-tap .28s ease-in-out infinite alternate}
+@keyframes pl-tap{to{transform:translateY(1px)}}
+.pl-curl{animation:pl-curl .9s ease-in-out infinite alternate}
+@keyframes pl-curl{to{transform:translateY(-8px)}}
+.pl-punch{animation:pl-punch .36s ease-in-out infinite alternate}
+@keyframes pl-punch{to{transform:translateX(5px)}}
+.pl-screen{animation:pl-screen 1.6s steps(2) infinite}
+@keyframes pl-screen{50%{fill:#a6e4ff}}
+.pl-face{opacity:.1;pointer-events:none;animation:pl-face 2.2s ease-in-out infinite}
+@keyframes pl-face{50%{opacity:.2}}
+.pl-fx text{font:700 9px -apple-system,BlinkMacSystemFont,sans-serif;fill:#e9e6f0;opacity:0;animation:pl-float 2.4s ease-out infinite}
+.pl-fx text:nth-child(2){animation-delay:.8s}.pl-fx text:nth-child(3){animation-delay:1.6s}
+.pl-notes text{fill:#f2c76b;font-size:11px}
+@keyframes pl-float{0%{opacity:0;transform:translateY(4px)}25%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+
+/* Room furniture that lives. */
+.pl-tv{animation:pl-tv 2.6s steps(3) infinite}
+@keyframes pl-tv{0%{fill:#2d4f8a}33%{fill:#4a3a8a}66%{fill:#2a6b6a}}
+.pl-tv2{animation:pl-blink 1.8s steps(2) infinite}.pl-tv3{animation:pl-blink 2.3s steps(2) infinite reverse}
+@keyframes pl-blink{50%{opacity:.15}}
+.pl-neon{animation:pl-neon 3.2s ease-in-out infinite}.pl-neon2{animation:pl-neon 3.2s ease-in-out infinite -1.6s}
+@keyframes pl-neon{0%,100%{opacity:1}48%{opacity:.55}50%{opacity:.2}52%{opacity:.9}}
+.pl-flame,.pl-flame2{transform-box:fill-box;transform-origin:50% 100%;animation:pl-flame .5s ease-in-out infinite alternate}
+.pl-flame2{animation-duration:.37s;animation-delay:-.2s}
+@keyframes pl-flame{from{transform:scaleY(.75);opacity:.85}to{transform:scaleY(1.25);opacity:1}}
+.pl-belt{animation:pl-blink .3s steps(2) infinite}
+.pl-tail{transform-box:fill-box;transform-origin:100% 100%;animation:pl-tail 1.6s ease-in-out infinite alternate}
+@keyframes pl-tail{to{transform:rotate(-18deg)}}
+.pl-rgb{fill:#ff5c8f;animation:pl-rgb 6s linear infinite}
+@keyframes pl-rgb{0%{fill:#ff5c8f}25%{fill:#ad8aee}50%{fill:#3ff0e0}75%{fill:#8fdc4a}100%{fill:#ff5c8f}}
+
+/* HUD: what the crew is doing right now, as small chips in the map corner. */
+.station-viewport{position:relative}
+.pl-hud{position:absolute;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:6px;max-width:min(520px,70%);pointer-events:none;z-index:3}
+.pl-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(10,12,20,.78);border:1px solid rgba(255,255,255,.1);
+ color:#e9e6f0;font:600 11.5px -apple-system,BlinkMacSystemFont,sans-serif;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.pl-chip .pl-dot{width:7px;height:7px;border-radius:50%;background:#7d7a90}
+.pl-chip.live{border-color:color-mix(in srgb,var(--accent) 55%,transparent)}
+.pl-chip.live .pl-dot{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pl-pulse 1.4s ease-in-out infinite}
+@keyframes pl-pulse{50%{opacity:.4}}
+
+/* Undo after deleting a room. */
+.pl-undo{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:80;display:flex;align-items:center;gap:14px;
+ padding:10px 12px 10px 18px;border-radius:12px;background:#151724;color:#eeeaf6;border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 40px rgba(0,0,0,.45);
+ transition:opacity .2s ease,transform .2s ease;font:550 13px -apple-system,BlinkMacSystemFont,sans-serif}
+.pl-undo.visible{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.pl-undo button{margin:0}
+.pl-delete p{margin-top:0}
+.room-card .pl-card-del{margin-left:6px}
+
+html[data-motion=off] :is(.pl-room,.sprite,.pl-hud) *,html[data-motion=off] .pl-bubble>g{animation:none!important}
+@media (prefers-reduced-motion:reduce){:is(.pl-room,.sprite,.pl-hud) *,.pl-bubble>g{animation:none!important}}
+
+/* TradingAgents research section in Settings. */
+.ta-settings{margin-top:14px}.ta-row{gap:8px;margin:8px 0}.ta-row input{flex:1}
+.ta-report{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;text-align:left;border-left:4px solid #7d7a90!important}
+.ta-report.ta-buy{border-left-color:#5fd38a!important}.ta-report.ta-sell{border-left-color:#ff7a7a!important}
+.ta-text{white-space:pre-wrap;max-height:50vh;overflow:auto;font-size:12px}
+
+/* Videos show a still at once (media_fix.js). */
+.gallery-placeholder.has-poster{position:relative;padding:0;overflow:hidden}
+.gallery-placeholder.has-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-play{position:absolute;inset:auto auto 8px 8px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.6);color:#fff;font-size:12px}
+.inline-media-card video{background:#000;min-height:120px}
+.inline-media-card.media-loading video{opacity:.92}

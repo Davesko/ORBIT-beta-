@@ -1,0 +1,28 @@
+/* Moving scene themes (2026-11-12): Hullócsillag, Hullám, Kódoló, Tábortűz. The canvas is drawn by theme_motion.js. */
+:root[data-theme="meteor"]{--theme-bg:#0a0f24;--theme-deep:#070a1a;--theme-surface:#141a38;--theme-text:#eef0ff;--theme-muted:#aab0d6;--theme-accent:#8fb4ff;--scene-2:#ff8fd8;color-scheme:dark}
+:root[data-theme="wave"]{--theme-bg:#061722;--theme-deep:#04101a;--theme-surface:#0e2533;--theme-text:#e2f4fb;--theme-muted:#9fc3d2;--theme-accent:#4fd1ff;--scene-2:#7cf0d0;color-scheme:dark}
+:root[data-theme="coder"]{--theme-bg:#07100c;--theme-deep:#040a07;--theme-surface:#0e1a14;--theme-text:#d9f7e6;--theme-muted:#8fb8a2;--theme-accent:#57f29a;--scene-2:#57f29a;color-scheme:dark}
+:root[data-theme="campfire"]{--theme-bg:#150d09;--theme-deep:#0d0806;--theme-surface:#25170f;--theme-text:#fbeee2;--theme-muted:#d2b49c;--theme-accent:#ffa94d;--scene-2:#ff6b3d;color-scheme:dark}
+
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .command-atmosphere{
+ position:absolute!important;inset:0!important;overflow:hidden!important;z-index:0!important;opacity:1!important;pointer-events:none!important;animation:none!important;display:block!important;background:var(--theme-bg)!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .command-atmosphere>*:not(canvas.theme-motion){display:none!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .command-atmosphere::before,
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .command-atmosphere::after{content:none!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) :is(.command-scroll,.command-compose-area,.command-topline){position:relative;z-index:1}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .command-compose-area{background:transparent!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .tool-app{background:var(--theme-bg)!important}
+canvas.theme-motion{display:none;position:absolute;inset:0;pointer-events:none;z-index:0}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) canvas.theme-motion{display:block}
+
+/* The workshop map floats over the same moving backdrop. */
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .station-viewport{background:var(--theme-bg)!important;background-image:none!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .station-viewport>canvas.theme-motion{opacity:.85}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) #station{position:relative;z-index:1;background:transparent!important}
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) .station-viewport>:not(canvas):not(#station){z-index:2}
+
+/* Chat bubbles and the composer stay readable over motion. */
+html:is([data-theme=meteor],[data-theme=wave],[data-theme=coder],[data-theme=campfire]) :is(.command-turn,.command-composer){background-color:color-mix(in srgb,var(--theme-surface) 88%,transparent)!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html[data-theme=coder] :is(.command-turn,.command-composer,.command-welcome h1){font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+html[data-theme=campfire] .command-welcome h1{text-shadow:0 0 22px rgba(255,150,60,.45)}
+html[data-theme=meteor] .command-welcome h1{text-shadow:0 0 18px rgba(143,180,255,.5)}

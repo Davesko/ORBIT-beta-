@@ -1,0 +1,15 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000019-0000-4000-8000-000000000019",
+ "time": "2026-11-11T15:05:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "info",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "category": "tip",
+  "text": "Írj ide: valaki@example.com"
+ },
+ "sig": "9a6a4ddf50f78c03cf112257ea12d9442708f68c5825945d9c75042a35464cb2"
+}

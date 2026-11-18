@@ -1,0 +1,49 @@
+/* Reference-inspired balanced palettes; accents adapted from Catppuccin. */
+:root[data-theme="emerald"]{--theme-bg:#101e1b;--theme-deep:#0b1513;--theme-surface:#1d302a;--theme-text:#e3efe5;--theme-muted:#b2cbb9;--theme-accent:#a6e3a1;color-scheme:dark;}
+:root[data-theme="cyan"]{--theme-bg:#0b1e30;--theme-deep:#081524;--theme-surface:#163247;--theme-text:#e1eef7;--theme-muted:#aac9da;--theme-accent:#89dceb;color-scheme:dark;}
+:root[data-theme="violet"]{--theme-bg:#191525;--theme-deep:#110f1b;--theme-surface:#2c243e;--theme-text:#eee7fa;--theme-muted:#c5b8dc;--theme-accent:#cba6f7;color-scheme:dark;}
+:root[data-theme="amber"]{--theme-bg:#241a17;--theme-deep:#181210;--theme-surface:#382a24;--theme-text:#f5e9dc;--theme-muted:#d4bfaa;--theme-accent:#fab387;color-scheme:dark;}
+:root[data-theme="rose"]{--theme-bg:#261923;--theme-deep:#1b121a;--theme-surface:#3b2936;--theme-text:#f5e6ef;--theme-muted:#d6bbcd;--theme-accent:#f5c2e7;color-scheme:dark;}
+:root[data-theme="slate"]{--theme-bg:#eff1f5;--theme-deep:#e6e9ef;--theme-surface:#ccd0da;--theme-text:#4c4f69;--theme-muted:#4c4f69;--theme-accent:#8839ef;color-scheme:light;}
+
+:root[data-theme]{--theme-line:color-mix(in srgb,var(--theme-muted) 24%,var(--theme-bg));--theme-tint:color-mix(in srgb,var(--theme-accent) 14%,var(--theme-bg));--text:var(--theme-text);--muted:var(--theme-muted);--bg:var(--theme-bg);--panel:var(--theme-surface);--line:var(--theme-line);--border:var(--theme-line);--atelier-bg:var(--theme-bg);--atelier-surface:var(--theme-surface);--atelier-panel:var(--theme-surface);--atelier-line:var(--theme-line);--atelier-text:var(--theme-text);--atelier-muted:var(--theme-muted)}
+html[data-theme] body{background:var(--theme-bg)!important;color:var(--theme-text)!important}
+html[data-theme] :is(header,.command-app,.world,.inspector,dialog,.automation-app,.automations-app,.publication-app,.growth-app,.command-compose-area){background:var(--theme-bg)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+html[data-theme] .app-rail{background:var(--theme-deep)!important;border-color:var(--theme-line)!important}
+html[data-theme] :is(input,textarea,select,.item-card,.command-turn,.command-action,.message,.chat-bubble,.command-composer,.automation-card,.automation-detail,.work-detail,pre,.project-switch){background-color:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+html[data-theme] button{color:var(--theme-text);border-color:var(--theme-line)!important}
+html[data-theme] :is(button.secondary,.theme-choice,.command-suggestions button){background:var(--theme-surface)!important;color:var(--theme-text)!important;box-shadow:none}
+html[data-theme] .app-rail :is(button,summary){background:transparent!important;border:0!important;box-shadow:none;color:var(--theme-muted)!important;outline:none}
+html[data-theme] .app-rail :is(button,summary):hover{background:var(--theme-tint)!important;color:var(--theme-text)!important}
+html[data-theme] .app-rail :is(.active,[aria-pressed=true]){background:var(--theme-tint)!important;color:var(--theme-accent)!important;box-shadow:inset 3px 0 var(--theme-accent)}
+html[data-theme] button[aria-pressed=true]{outline:none}
+html[data-theme] .theme-choice[aria-pressed=true]{border-color:var(--theme-accent)!important;background:var(--theme-tint)!important}
+html[data-theme] :is(button.primary,#runGraph,#send,.command-send){background:var(--theme-accent)!important;color:var(--theme-deep)!important;border-color:var(--theme-accent)!important}
+html[data-theme=slate] :is(button.primary,#runGraph,#send,.command-send){color:#ffffff!important}
+html[data-theme] :is(h1,h2,h3,h4,p,label,strong,summary,.rich-text,.agent-name,.brand){color:var(--theme-text)!important}
+html[data-theme] :is(small,.hint,.eyebrow,.command-footnote,.status){color:var(--theme-muted)!important}
+html[data-theme] ::placeholder{color:var(--theme-muted)!important;opacity:1}
+html[data-theme] a{color:var(--theme-accent)!important}
+html[data-theme] :focus-visible{outline:2px solid var(--theme-accent)!important;outline-offset:3px}
+.theme-palette{display:flex;align-items:center;gap:0;margin-right:8px}.theme-palette i{display:block!important;width:13px!important;height:13px!important;border-radius:50%;margin:0 -2px 0 0!important;border:1px solid var(--theme-line);flex:none}.theme-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}.theme-choice{display:flex;align-items:center;min-height:52px;padding:10px}
+.command-atmosphere{opacity:.4!important;pointer-events:none!important;background:radial-gradient(ellipse at 20% 30%,color-mix(in srgb,var(--theme-accent) 20%,transparent),transparent 55%),radial-gradient(ellipse at 75% 65%,color-mix(in srgb,var(--theme-muted) 15%,transparent),transparent 50%);background-size:160% 160%;animation:orbit-chat-drift 26s ease-in-out infinite alternate!important}
+@keyframes orbit-chat-drift{from{background-position:0% 0%}to{background-position:100% 100%}}
+html[data-motion=off] .command-atmosphere{animation:none!important}
+@media(prefers-reduced-motion:reduce){.command-atmosphere{animation:none!important}}
+/* Component surfaces, including nested cards which predate palette tokens. */
+html[data-theme] :is(#inspector,.agent-work,.agent-facts,.command-plan,.command-intake,.command-intent,.command-result,.command-step,.command-review,.command-actions,.work-summary,.work-detail,.pending-job,.portrait,.command-scope,.command-model,.automation-overview,.automation-health,.automation-notice,.workflow-monitor,.inspector-tabs,.settings-panel,.command-attachment,.command-message,.command-assistant,.command-user){background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important;border-radius:14px!important}
+html[data-theme] :is(.command-turn,.command-bubble,.command-composer,.command-turn>div,.command-turn>section,.command-turn>article,.command-turn details,.command-turn pre,.command-turn textarea){border-radius:16px!important;border-color:var(--theme-line)!important}
+html[data-theme] :is(.command-turn,.agent-work) :is(section,article,details){background-color:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+html[data-theme] :is(.inspector-tabs button,.command-turn button,.command-toolbar button,.workspace-more,.workspace-add){background:var(--theme-tint)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important}
+.rail-chat-list{min-width:0;max-width:100%;overflow-x:hidden!important}.rail-chat{min-width:0;max-width:100%}.rail-chat-open{width:0;flex:1 1 0;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important}.rail-chat-more{opacity:1!important}.app-rail .rail-folder{min-width:0;overflow-x:hidden}
+.resource-chip{font-size:11px;white-space:nowrap;margin-left:8px;color:var(--theme-muted)}.resource-chip[data-level=green]{color:#81c995}.resource-chip[data-level=yellow]{color:#efc66b}.resource-chip[data-level=red]{color:#ff8c98}
+
+:root[data-theme="cyber"]{--theme-bg:#202529;--theme-deep:#080c10;--theme-surface:#2b3238;--theme-text:#92eee6;--theme-muted:#c0d2d3;--theme-accent:#ff8997;color-scheme:dark;}
+:root[data-theme="sunset"]{--theme-bg:#211b30;--theme-deep:#14101f;--theme-surface:#33283e;--theme-text:#f5e7d9;--theme-muted:#d6bfca;--theme-accent:#ffba88;color-scheme:dark;}
+:root[data-theme="arctic"]{--theme-bg:#12242a;--theme-deep:#0a171c;--theme-surface:#20363e;--theme-text:#e3f5f2;--theme-muted:#b5d3d0;--theme-accent:#a4d7ff;color-scheme:dark;}
+html[data-theme=cyber] .app-rail svg{color:#ff8997!important} html[data-theme=cyber] .command-app{color:#92eee6!important}
+html[data-theme] :is(.understood-card,.understood-tags span,.command-plan,.action-explanation,.command-task,.command-output,.work-state,.work-section,.agent-work-card,.brief-card,.brief-item){background:var(--theme-surface)!important;color:var(--theme-text)!important;border:1px solid var(--theme-line)!important;border-radius:14px!important}
+html[data-theme] :is(.understood-title,.understood-tags,.command-plan h3,.command-turn small,.agent-work small){color:var(--theme-muted)!important}
+html[data-theme] .understood-chip{background:var(--theme-tint)!important;color:var(--theme-text)!important;border-color:var(--theme-line)!important;border-radius:8px!important}
+html[data-theme] .command-turn.assistant{background:var(--theme-surface)!important;border-radius:18px!important;padding:18px!important}
+html[data-theme] .command-turn.user{border-radius:18px!important}

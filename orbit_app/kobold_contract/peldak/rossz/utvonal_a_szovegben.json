@@ -1,0 +1,15 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "0000001a-0000-4000-8000-00000000001a",
+ "time": "2026-11-11T15:06:00Z",
+ "from": "orbit",
+ "to": "kobold",
+ "type": "info",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "category": "tip",
+  "text": "A fájl: /Users/valaki/Documents/titok.txt"
+ },
+ "sig": "bba6780890a4d62ee7999e29ac131d2b378d1178294a3499c0eda0004b6c3cf2"
+}

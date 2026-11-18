@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.DS_Store
+orbit_app/runtime/
+orbit_app/remotion/node_modules/
+orbit_app/remotion/dist/
+.env*
+*.pem
+*.key
+client_secret*.json

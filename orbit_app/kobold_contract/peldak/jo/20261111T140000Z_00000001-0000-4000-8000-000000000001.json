@@ -1,0 +1,26 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000001-0000-4000-8000-000000000001",
+ "time": "2026-11-11T14:00:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "profile",
+ "reply_to": null,
+ "title": "Kobold névjegye",
+ "body": {
+  "app_version": "2026.11",
+  "strengths": [
+   "Shorts-gyártás",
+   "képességírás Pythonban"
+  ],
+  "skills": [
+   {
+    "skill_id": "ai_ceg_arfolyamok",
+    "title": "AI cégek árfolyamai",
+    "kind": "data",
+    "summary": "Microsoft, Google és más AI-befektetők aktuális árfolyama"
+   }
+  ]
+ },
+ "sig": "3962380b461266eed4b580748f5064545e02efdbb7e8bccf490489a32143465c"
+}

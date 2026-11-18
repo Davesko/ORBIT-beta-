@@ -1,0 +1,20 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000005-0000-4000-8000-000000000005",
+ "time": "2026-11-11T14:04:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "info",
+ "reply_to": null,
+ "title": "Yahoo: chart igen, quote nem",
+ "body": {
+  "category": "source",
+  "text": "A Yahoo Finance chart-végpontja kulcs nélkül megy, a quote-végpont 401-et ad.",
+  "evidence": "3 sikeres hívás, 2026-11-10",
+  "tags": [
+   "tőzsde",
+   "api"
+  ]
+ },
+ "sig": "9588f006e2d71b4e7c6223c46c67c22056cf591d14a66ac5c8894d93d5a57863"
+}

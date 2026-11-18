@@ -1,0 +1,15 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000018-0000-4000-8000-000000000018",
+ "time": "2026-11-11T15:04:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "info",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "category": "tip",
+  "text": "A kulcsom: sk_live_ABCDEFGHIJKLMNOP"
+ },
+ "sig": "315d8a07a57fa6a561aca4b8571db7326bd454a0a9815f833b3512e82a7314ba"
+}

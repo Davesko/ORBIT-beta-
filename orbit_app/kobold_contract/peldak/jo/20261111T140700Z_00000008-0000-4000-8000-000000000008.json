@@ -1,0 +1,15 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000008-0000-4000-8000-000000000008",
+ "time": "2026-11-11T14:07:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "receipt",
+ "reply_to": "00000003-0000-4000-8000-000000000003",
+ "title": "nyugta",
+ "body": {
+  "status": "adopted",
+  "note": "Átvéve, a saját tesztek átmentek."
+ },
+ "sig": "23f864fc85540082601fc41564dea27c7c2fe32dbc0cf15edc301c866c5eae7f"
+}

@@ -1,0 +1,14 @@
+.app-rail #navSearch{margin-top:auto!important}.app-rail #navSettings{margin-top:0!important}
+.rail-chat-list{overflow-x:hidden;min-width:0}.rail-chat{display:block;position:relative;overflow:hidden;min-width:0}
+.rail-chat-front{position:relative;display:flex;align-items:center;min-width:0;width:100%;background:var(--theme-deep,#141420);transform:translateX(var(--chat-slide,0px));transition:transform .15s ease;touch-action:pan-y}
+.rail-chat.active .rail-chat-front{background:color-mix(in srgb,var(--accent) 15%,var(--theme-deep,#141420))}
+.rail-chat-front .rail-chat-open{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;touch-action:pan-y}
+.rail-chat-delete{position:absolute!important;inset:0 0 0 auto;width:82px;padding:6px!important;margin:0!important;border:0!important;border-radius:0!important;background:#862e46!important;color:var(--theme-text,#ffffff)!important;font-size:11px!important}
+.rail-chat-trash{font-size:10px!important;padding:8px!important;margin:4px 0 0!important;color:var(--theme-muted,#b5afca);background:transparent;border:0;text-align:left}
+.chat-undo{position:fixed;z-index:100;bottom:25px;left:25px;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:12px;border:1px solid var(--theme-line,#443d56);background:var(--theme-surface,#161620);color:var(--theme-text,#eee);box-shadow:0 12px 40px #0006;font-size:13px}
+.chat-undo button{margin:0!important}.chat-search-list{max-height:55vh;overflow:auto}.chat-search-hit{display:grid;gap:5px;width:100%;text-align:left;padding:12px;border-bottom:1px solid var(--theme-line,#443d56);overflow-wrap:anywhere}.chat-search-hit>small{opacity:.75}
+.canvas-tools .canvas-close-all{margin-left:auto!important;order:10;white-space:nowrap}
+.command-attachment{flex-wrap:wrap}.chat-file-chip{display:flex;align-items:center;gap:8px;max-width:100%;padding:6px 9px;border:1px solid var(--theme-line,#443d56);border-radius:8px}.chat-file-chip>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px}
+.chat-drop-hint{position:absolute;inset:8px;z-index:50;pointer-events:none;display:grid;place-content:center;border:2px dashed var(--accent);border-radius:14px;background:color-mix(in srgb,var(--theme-bg,#131320) 90%,transparent);color:var(--theme-text,#eee);font-size:18px;text-align:center}
+.chat-drop-hint[hidden]{display:none}.chat-drop-hint small{font-size:12px;margin-top:10px}.command-app{position:relative}
+@media(prefers-reduced-motion:reduce){.rail-chat-front{transition:none}}

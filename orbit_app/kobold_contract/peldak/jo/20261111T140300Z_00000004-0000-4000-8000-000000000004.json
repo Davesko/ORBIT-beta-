@@ -1,0 +1,24 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000004-0000-4000-8000-000000000004",
+ "time": "2026-11-11T14:03:00Z",
+ "from": "orbit",
+ "to": "kobold",
+ "type": "skill",
+ "reply_to": null,
+ "title": "Forrásalapú kutatás",
+ "body": {
+  "skill_id": "evidence-research",
+  "kind": "procedure",
+  "summary": "Friss, forrásolt kutatás menete.",
+  "steps": [
+   "Tisztázd a témát, az időablakot és a célt.",
+   "Valódi webes forrásokat használj URL-lel és dátummal."
+  ],
+  "verification": [
+   "Minden állításnak van ténylegesen elolvasott forrása."
+  ],
+  "version": 1
+ },
+ "sig": "6852c5be91e326fbd85af46bca3a0939d597da568da950b7981276aeeea1b778"
+}

@@ -1,0 +1,18 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000016-0000-4000-8000-000000000016",
+ "time": "2026-11-11T15:02:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "skill",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "skill_id": "x",
+  "kind": "data",
+  "summary": "x",
+  "version": 1,
+  "code": "import os"
+ },
+ "sig": "9546da685be6fe4a8893bc7954d5964e36cdf57f636d3621a7926ade8289f4ae"
+}

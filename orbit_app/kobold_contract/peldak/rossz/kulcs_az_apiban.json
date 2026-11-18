@@ -1,0 +1,26 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000017-0000-4000-8000-000000000017",
+ "time": "2026-11-11T15:03:00Z",
+ "from": "orbit",
+ "to": "kobold",
+ "type": "skill",
+ "reply_to": null,
+ "title": "x",
+ "body": {
+  "skill_id": "x",
+  "kind": "data",
+  "summary": "x",
+  "version": 1,
+  "api": {
+   "base": "https://x.example",
+   "auth": {
+    "kind": "query",
+    "name": "appid",
+    "key": "abc"
+   },
+   "endpoints": []
+  }
+ },
+ "sig": "d2af975a7eda88d4c70079c9003b34a2eceb6731cc86278b9edd906204099586"
+}

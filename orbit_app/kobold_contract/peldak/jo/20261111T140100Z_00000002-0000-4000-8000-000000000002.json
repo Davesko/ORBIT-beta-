@@ -1,0 +1,37 @@
+{
+ "protocol": "kobold-orbit/1",
+ "id": "00000002-0000-4000-8000-000000000002",
+ "time": "2026-11-11T14:01:00Z",
+ "from": "kobold",
+ "to": "orbit",
+ "type": "skill",
+ "reply_to": null,
+ "title": "AI cégek árfolyamai",
+ "body": {
+  "skill_id": "ai_ceg_arfolyamok",
+  "kind": "data",
+  "summary": "Megmutatja a nagy AI-befektetők (Microsoft, Google) aktuális árfolyamát.",
+  "examples": [
+   "Mennyi most a Microsoft árfolyama?",
+   "Hogy állnak ma az AI-cégek részvényei?"
+  ],
+  "expectations": [
+   "A válasz tartalmazza a tickert és az aktuális árat"
+  ],
+  "sources": [
+   {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/MSFT",
+    "works": true,
+    "needs_key": false
+   }
+  ],
+  "api": null,
+  "evidence": {
+   "tests_passed": 3,
+   "used": 12,
+   "since": "2026-10-30"
+  },
+  "version": 2
+ },
+ "sig": "d2b9615539bccb56492674026b4cd0ecdd3c9879dc7c9d7608f98d0397529619"
+}

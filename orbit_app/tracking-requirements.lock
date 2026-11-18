@@ -1,0 +1,11 @@
+# Install into the existing media-runtime with --no-deps.
+# OpenCV is provided by the pinned opencv-python-headless in media-requirements.lock.
+supervision==0.27.0
+matplotlib==3.11.2
+defusedxml==0.7.1
+contourpy==1.4.0
+cycler==0.12.1
+fonttools==4.67.0
+kiwisolver==1.5.1
+python-dateutil==2.9.0.post0
+six==1.17.0
