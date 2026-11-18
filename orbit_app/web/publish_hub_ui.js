@@ -4,7 +4,7 @@
    A function scope: a function declared in a bare block would replace the app's global of that name. */
 (()=>{
  let H=null,tab='videos',picked=null,typeFilter='all',stateFilter='new',sel={},drafts={},textTab='',opts={privacy:'public',kids:false},busy=false,sig='';
- let proposal=null,covers={},coverBusy=false,sortBy='score';
+ let covers={},coverBusy=false,sortBy='score';
  const scoreClass=n=>n>=70?'high':n>=50?'mid':'low';
  const badge=(n,big)=>{const b=el('span','hub-score '+scoreClass(n)+(big?' big':''),String(n));b.title='Pontszám (0–100): az ORBIT becslése arra, mennyire esélyes a videó';return b;};
  const op=async(name,args={})=>(await call('project_app',{op:name,args})).result;
@@ -123,11 +123,11 @@
 
  // Automatic scheduling: off until the owner switches it on; then the best-scored checked video always takes a channel's next free slot.
  function autoBar(){
-  const a=H.auto||{enabled:false,min_score:55},box=el('div','hub-auto'+(a.enabled?' on':''));
-  const left=el('div');left.append(el('b','','Automatikus ütemezés: '+(a.enabled?'BE':'ki')),el('small','hint',a.enabled?'A legjobb pontszámú, ellenőrzött videó kerül a csatornák következő szabad időpontjába. Csak '+a.min_score+' pont fölötti videó megy.':'Ki van kapcsolva: semmi nem ütemeződik, amíg te nem csinálod. Bekapcsolva az ORBIT a legjobb pontszámú videót teszi a következő szabad helyre.'));
+  const a=H.auto||{min_score:55},n=(H.accounts||[]).filter(x=>x.auto).length,box=el('div','hub-auto'+(n?' on':''));
+  const left=el('div');left.append(el('b','','Automatikus ütemezés: '+(n?n+' csatornán BE':'ki')),el('small','hint',n?'A legjobb pontszámú, ellenőrzött videó kerül a bekapcsolt csatornák következő üres időpontjába. Csak '+a.min_score+' pont fölötti megy.':'Ki van kapcsolva: semmi nem ütemeződik magától. Csatornánként kapcsolhatod be az Ütemterv oldalon.'));
   const right=el('div','hub-auto-ctl');
   const min=el('input');min.type='number';min.min=0;min.max=100;min.value=a.min_score;min.title='Legalacsonyabb pontszám, ami még mehet';min.onchange=()=>act(async()=>{await op('publish_auto',{min_score:Number(min.value)});await load(true);});
-  right.append(el('small','','min. pont'),min,button(a.enabled?'Kikapcsolás':'Bekapcsolás',()=>act(async()=>{const r=await op('publish_auto',{enabled:!a.enabled});toast(r.message);await load(true);}),a.enabled?'secondary':''));
+  right.append(el('small','','min. pont'),min,button('Csatornák beállítása →',()=>{tab='plan';render();},'secondary'));
   box.append(left,right);return box;
  }
 
@@ -236,75 +236,61 @@
  }
 
  // ------------------------------------------------ Ütemterv
+ // ------------------------------------------------ Ütemterv: one simple card per channel
+ const pad=n=>String(n).padStart(2,'0');
+ const parseTimes=t=>[...new Set(String(t).split(/[,;\s]+/).map(x=>{const m=/^(\d{1,2})[:.](\d{2})$/.exec(x.trim());return m&&+m[1]<=23&&+m[2]<=59?pad(m[1])+':'+m[2]:null;}).filter(Boolean))].sort();
+ const everyTimes=(hours,from,to)=>{const out=[];let t=+from.slice(0,2)*60+ +from.slice(3),stop=+to.slice(0,2)*60+ +to.slice(3);const step=Math.round(hours*60);while(step>=30&&t<=stop&&out.length<48){out.push(pad(Math.floor(t/60))+':'+pad(t%60));t+=step;}return out;};
+ const rhythm=slots=>{if(slots.length===1)return 'naponta egyszer, '+slots[0];const m=slots.map(x=>+x.slice(0,2)*60+ +x.slice(3));const d=m.slice(1).map((x,i)=>x-m[i]);if(d.every(x=>x===d[0])&&d[0]>=30&&d[0]*slots.length>=1440-d[0])return d[0]===60?'óránként':d[0]%60===0?d[0]/60+' óránként':d[0]+' percenként';return slots.length+' időpont naponta';};
  function planPage(body){
-  const top=el('div','hub-plan-top');
-  const txt=el('div');txt.append(el('h3','','Heti terv egy kattintással'),el('p','hint','Az ORBIT a csatornák saját időpontjaira osztja el azokat a videókat, amelyeket az adott csatorna fogad. Átnézed, kiveszed amit nem akarsz, és csak a jóváhagyás után ütemeződik.'));
-  top.append(txt,button('✦ Javaslat a következő 7 napra',async()=>{const r=await op('publish_plan_suggest',{days:7});proposal=dict(r.items);if(!r.items.length)toast('Nincs mit javasolni: állítsd be a csatornáknál, milyen típusú videót fogadnak, vagy nincs több vár videó.',true);render();}));
-  body.append(autoBar(),top);
-  if(proposal)body.append(proposalBox());
+  body.append(autoBar());
   const lanes=el('div','hub-lanes');
   for(const a of H.accounts){
    const lane=el('section','hub-lane');
    const head=el('div','hub-lane-head');head.append(el('span','hub-icon',ICON[a.platform]||'•'),el('b','',a.label),el('small','',PLAT[a.platform]+(a.status==='connected'?'':' · '+STATUS[a.status])));
+   if(a.status==='connected'){
+    const sw=el('label','ap-hub-switch');const cb=el('input');cb.type='checkbox';cb.checked=!!a.auto;
+    cb.onchange=()=>act(async()=>{const r=await op('publish_auto',{enabled:cb.checked,account:a.id});toast(cb.checked?'Be: ide magától ütemezi a legjobb videókat.':'Ki: ide nem ütemez magától.');await load(true);});
+    sw.append(cb,el('span','','Automatikus'));sw.title='Be: a legjobb pontszámú videó magától a következő üres időpontra kerül.';head.append(sw);}
    lane.append(head);
-   lane.append(el('p','hint','Időpontok: '+a.slots.join(', ')+' · napi legfeljebb '+a.per_day));
-   lane.append(el('p','hint',a.types.length?'Fogad: '+a.types.map(t=>typeOf(t).label).join(', '):'Nincs beállítva, milyen videók mennek ide.'));
-   lane.append(button('Beállítás',()=>planDialog(a),'text-button'));
-   const mine=H.calendar.filter(c=>c.account===a.id);
-   const next=mine.filter(c=>['scheduled','queued','uploading'].includes(c.status)),done=mine.filter(c=>!['scheduled','queued','uploading'].includes(c.status)).slice(-4);
-   if(!mine.length)lane.append(el('p','hub-empty','Nincs ütemezett vagy friss közzététel.'));
-   for(const c of [...next,...done]){const r=el('div','hub-cal '+c.status);r.append(el('span','hub-cal-time',when(c.when)),el('span','hub-cal-title',c.title),el('small','',POST[c.status]));
-    if(c.status==='scheduled'){const t=el('input');t.type='datetime-local';t.value=localInput(c.when);t.onchange=()=>act(async()=>{await op('publish_reschedule',{id:c.id,when:Math.round(new Date(t.value).getTime()/1000)});await load(true);});r.append(t,button('▶ Most',()=>act(async()=>{const r3=await op('publish_now',{id:c.id});toast(r3.message);await load(true);}),'secondary'),button('✕',async()=>{await op('publish_cancel',{id:c.id});await load(true);},'text-button'));}
-    if(c.error)r.append(el('small','error-text',c.error));
-    lane.append(r);}
+   lane.append(el('p','hub-rhythm','🕒 '+rhythm(a.slots)+' · '+a.slots.length+' videó naponta'));
+   const chips=el('div','hub-slotchips');for(const t of a.slots)chips.append(el('span','hub-slotchip',t));lane.append(chips);
+   const row=el('div','hub-row');row.append(button('Időpontok módosítása',()=>planDialog(a),'secondary'));
+   if(a.status==='connected'&&!a.auto)row.append(button('✦ Kitöltés a legjobb videókkal',()=>act(async()=>{const r=await op('publish_plan_fill',{account:a.id});toast(r.message,!r.done);await load(true);})));
+   lane.append(row);
+   if(a.status==='connected'){
+    lane.append(el('h4','','Következő kiküldések'));
+    for(const u of a.upcoming||[]){
+     const r=el('div','hub-up '+u.status);r.append(el('span','hub-cal-time',when(u.when)));
+     if(u.post){r.append(el('span','hub-cal-title',u.title||'videó'),u.score!=null?badge(u.score):el('span'),el('small','',POST[u.status]||u.status));
+      if(u.status==='scheduled')r.append(button('▶ Most',()=>act(async()=>{const x=await op('publish_now',{id:u.post});toast(x.message);await load(true);}),'secondary'),button('✕',async()=>{await op('publish_cancel',{id:u.post});await load(true);},'text-button'));}
+     else r.append(el('span','hub-cal-title hint',a.auto?'üres: nincs elég jó videó, jön amint lesz':'üres hely'));
+     lane.append(r);}
+    if(!(a.upcoming||[]).length)lane.append(el('p','hint','Nincs szabad időpont a következő napokban.'));}
    lanes.append(lane);}
   if(!H.accounts.length)lanes.append(el('p','hint','Előbb adj hozzá fiókot a Fiókok lapon.'));
   body.append(lanes);
  }
- const dict=items=>({items:items.map((i,k)=>({...i,k})),off:new Set()});
-
- function proposalBox(){
-  const box=el('div','hub-proposal');
-  const keep=proposal.items.filter(i=>!proposal.off.has(i.k));
-  box.append(el('h3','','Javaslat · '+keep.length+' közzététel'));
-  let day='';
-  for(const i of proposal.items){
-   const d=new Date(i.when*1000).toLocaleDateString('hu-HU',{weekday:'long',month:'long',day:'numeric'});
-   if(d!==day){day=d;box.append(el('div','hub-day',d));}
-   const r=el('div','hub-prop'+(proposal.off.has(i.k)?' off':''));
-   r.append(el('span','hub-cal-time',new Date(i.when*1000).toLocaleTimeString('hu-HU',{hour:'2-digit',minute:'2-digit'})),el('b','',(ICON[i.platform]||'')+' '+i.account_label),badge(i.score||0),el('span','hub-cal-title',i.video_title),el('small','',typeOf(i.type).label));
-   const x=el('button','text-button',proposal.off.has(i.k)?'↶':'✕');x.onclick=()=>{proposal.off.has(i.k)?proposal.off.delete(i.k):proposal.off.add(i.k);render();};r.append(x);box.append(r);}
-  const row=el('div','hub-row');
-  row.append(button('Mind ütemezése ('+keep.length+')',async()=>{const r=await op('publish_plan_apply',{items:keep});toast(r.message,!!r.failed.length&&!r.done);proposal=null;await load(true);}),button('Elvetés',()=>{proposal=null;render();},'secondary'));
-  box.append(row);return box;
- }
 
  function planDialog(a){
   const body=el('div','hub-connect');
-  const parse=t=>[...new Set(String(t).split(/[,;\s]+/).map(x=>{const m=/^(\d{1,2})[:.](\d{2})$/.exec(x.trim());return m&&+m[1]<=23&&+m[2]<=59?String(m[1]).padStart(2,'0')+':'+m[2]:null;}).filter(Boolean))].sort();
-  const slots=el('textarea');slots.rows=2;slots.value=a.slots.join(', ');slots.placeholder='00:00, 02:00, 04:00 … (beillesztheted a teljes listát)';
-  const per=el('input');per.type='number';per.min=1;per.max=48;per.value=a.per_day;let perTouched=a.per_day!==a.slots.length;
-  per.oninput=()=>{perTouched=true;};
-  const sync=()=>{const n=parse(slots.value).length;count.textContent=n+' időpont naponta';if(!perTouched&&n)per.value=n;};
-  slots.oninput=sync;
-  const count=el('small','hint','');
-  // "Every N hours" fills the list.
-  const every=el('div','hub-row');
-  const hrs=el('input');hrs.type='number';hrs.min=0.5;hrs.max=12;hrs.step=0.5;hrs.value=2;hrs.style.width='70px';
+  const slots=el('textarea');slots.rows=2;slots.value=a.slots.join(', ');
+  const preview=el('div','hub-slotchips');
+  const show=()=>{const l=parseTimes(slots.value);preview.replaceChildren(...l.map(t=>el('span','hub-slotchip',t)),el('small','hint',l.length+' videó naponta'));};
+  slots.oninput=show;
   const from=el('input');from.type='time';from.value='00:00';const to=el('input');to.type='time';to.value='22:00';
-  every.append(el('span','hint','Vagy: minden'),hrs,el('span','hint','órában, '),from,el('span','hint','–'),to,button('Kitöltés',()=>{
-   const out=[];let t=+from.value.slice(0,2)*60+ +from.value.slice(3),stop=+to.value.slice(0,2)*60+ +to.value.slice(3);const step=Math.round(Number(hrs.value)*60);
-   if(!(step>=30)){toast('Az időköz legalább fél óra.',true);return;}
-   while(t<=stop&&out.length<48){out.push(String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0'));t+=step;}
-   slots.value=out.join(', ');perTouched=false;sync();},'secondary'));
-  const types=new Set(a.types);
-  const chips=el('div','hub-targets');
+  const presets=el('div','hub-presets');
+  for(const [label,h] of [['Óránként',1],['2 óránként',2],['3 óránként',3],['4 óránként',4],['6 óránként',6],['12 óránként',12]]){
+   presets.append(button(label,()=>{if(h===1)to.value='23:00';slots.value=everyTimes(h,from.value,to.value).join(', ');show();},'secondary'));}
+  presets.append(button('Naponta egyszer',()=>{slots.value=a.platform==='youtube'?'18:00':a.slots[0]||'18:00';show();},'secondary'));
+  const window_=el('div','hub-row');window_.append(el('span','hint','Ettől'),from,el('span','hint','eddig'),to);
+  const more=el('details','hub-more');more.append(el('summary','','Egyedi időpontok'),el('p','hint','ÓÓ:PP, vesszővel vagy sortöréssel; beilleszthető teljes lista is.'),slots);
+  const types=new Set(a.types);const chips=el('div','hub-targets');
   for(const t of H.types.filter(t=>t.id!=='other'||t.total)){const c=el('button','hub-target'+(types.has(t.id)?' on':''),t.icon+' '+t.label);c.onclick=()=>{types.has(t.id)?types.delete(t.id):types.add(t.id);c.classList.toggle('on');};chips.append(c);}
-  body.append(el('label','','Közzétételi időpontok (ÓÓ:PP, vesszővel vagy sortöréssel)'),slots,count,every,el('label','','Legfeljebb ennyi videó naponta'),per,el('label','','Milyen típusú videókat fogad ez a csatorna?'),chips,
-   el('p','hint','Ezek az időpontok adják a „következő szabad hely”-et és a heti terv rácsát. Egy napra legfeljebb 48 időpont adható meg; a napi korlát alapból az időpontok száma. A választott típusú új videókat a Videók lap alapból ide jelöli be.'),
-   button('Mentés',async()=>{const list=parse(slots.value);if(!list.length){toast('Adj meg legalább egy időpontot (ÓÓ:PP).',true);return;}
-    const r=await op('publish_account_plan',{id:a.id,slots:list,per_day:Number(per.value),types:[...types]});toast(r.message);$('modal').close();await load(true);}));
-  sync();showModal(a.label+' · ütemezés',body);
+  const typeBox=el('details','hub-more');typeBox.append(el('summary','','Milyen videókat fogadjon'),chips);
+  body.append(el('label','','Milyen gyakran posztoljon?'),presets,window_,preview,more,typeBox,
+   button('Mentés',async()=>{const list=parseTimes(slots.value);if(!list.length){toast('Válassz gyakoriságot, vagy adj meg legalább egy időpontot.',true);return;}
+    const r=await op('publish_account_plan',{id:a.id,slots:list,types:[...types]});toast(r.message);$('modal').close();await load(true);}));
+  show();showModal(a.label+' · időpontok',body);
  }
 
  // ------------------------------------------------ Fiókok

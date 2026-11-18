@@ -643,6 +643,8 @@ def snapshot(s):
         mine = [v for v in shown if v['type'] == t_['id']]
         if mine or t_['id'] != 'other':
             types.append(dict(t_, total=len(mine), new=sum(v['state'] == 'new' for v in mine), scheduled=sum(v['state'] == 'scheduled' for v in mine)))
+    for a_ in accs:
+        a_['upcoming'] = plan.upcoming(s, a_['id'], vids) if a_['status'] == 'connected' else []
     return dict(accounts=accs, videos=vids, routes=routes, types=types, calendar=plan.calendar(s),
                 platforms=[dict(id=k, label=v['label'], kinds=v['kinds'], login=v['login']) for k, v in PLATFORMS.items()],
                 google_client=bool(shared_google_client(s)), auto=plan.auto_settings(s),
@@ -669,9 +671,11 @@ def dispatch(s, op, args=None):
         return post(s, args.get('video'), args.get('accounts'), args.get('title'), args.get('caption'), args.get('privacy') or 'public',
                     args.get('made_for_kids') is True, args.get('when'), plan=args.get('plan'), accept_unverified=args.get('accept_unverified') is True)
     if op == 'publish_account_plan':
-        return plan.save(s, args.get('id'), args.get('slots'), args.get('per_day'), args.get('types'), args.get('every'))
+        return plan.save(s, args.get('id'), args.get('slots'), None, args.get('types'), args.get('every'), args.get('auto') if 'auto' in args else None)
     if op == 'publish_plan_suggest':
         return plan.suggest(s, int(args.get('days') or 7))
+    if op == 'publish_plan_fill':
+        return plan.fill(s, args.get('account'))
     if op == 'publish_plan_apply':
         return plan.apply(s, args.get('items'))
     if op == 'publish_reschedule':
@@ -713,7 +717,7 @@ def dispatch(s, op, args=None):
         import publish_reach as reach
         return reach.dispatch(s, op, args)
     if op == 'publish_auto':
-        return plan.auto_save(s, args.get('enabled') if 'enabled' in args else None, args.get('min_score') if 'min_score' in args else None)
+        return plan.auto_save(s, args.get('enabled') if 'enabled' in args else None, args.get('min_score') if 'min_score' in args else None, args.get('account'))
     if op == 'publish_now':
         return publish_now(s, args.get('id'))
     if op == 'publish_cancel':

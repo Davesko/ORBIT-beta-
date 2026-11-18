@@ -71,3 +71,9 @@
 .ap-state-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.ap-state-actions button{font-size:15px;padding:12px 20px}
 
 .sw-viewers{color:var(--accent);font-variant-numeric:tabular-nums;font-size:12px;margin:0 6px}
+
+.hub-rhythm{font-size:15px;font-weight:600;margin:6px 0}
+.hub-slotchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 10px}.hub-slotchip{font-size:12px;padding:3px 9px;border:1px solid var(--line);border-radius:999px;font-variant-numeric:tabular-nums}
+.hub-presets{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.hub-lane h4{margin:14px 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.hub-up{display:flex;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px;flex-wrap:wrap}.hub-up.empty{opacity:.7}

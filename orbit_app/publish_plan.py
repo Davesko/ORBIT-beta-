@@ -28,7 +28,8 @@ def settings(s, row, types_from_routes=None):
     types = m.get('types')
     if types is None:
         types = types_from_routes or []
-    return dict(slots=sorted(set(slots)) or ['18:00'], per_day=int(m.get('per_day') or max(1, len(slots))), types=list(types))
+    slots = sorted(set(slots)) or ['18:00']
+    return dict(slots=slots, per_day=len(slots), types=list(types), auto=m.get('auto') is True)      # one post per time: the daily limit is the number of times
 
 
 def parse_slots(items):
@@ -57,7 +58,7 @@ def every_slots(hours, start='00:00', end='23:59'):
     return out
 
 
-def save(s, aid, slots=None, per_day=None, types=None, every=None):
+def save(s, aid, slots=None, per_day=None, types=None, every=None, auto=None):
     import publish_hub as hub
     import publish_library as lib
     row = hub.account(s, aid)
@@ -71,10 +72,9 @@ def save(s, aid, slots=None, per_day=None, types=None, every=None):
         m['slots'] = clean
         if per_day is None:
             m.pop('per_day', None)          # the daily limit follows the number of times until the owner sets it
-    if per_day is not None:
-        if not isinstance(per_day, int) or isinstance(per_day, bool) or not 1 <= per_day <= 48:
-            raise ValueError('A napi korlát 1–48 videó lehet.')
-        m['per_day'] = per_day
+    m.pop('per_day', None)          # kept only for old data: the daily limit is the number of times
+    if auto is not None:
+        m['auto'] = auto is True
     if types is not None:
         if not isinstance(types, list) or set(types) - set(lib.TYPE_IDS):
             raise ValueError('Ismeretlen videótípus.')
@@ -117,10 +117,10 @@ def freshness(v, now=None):
     return max(0.35, 0.5 ** (age_h / 48)) if v.get('type') == 'clip' else 1.0
 
 
-def suggest(s, days=7, per_account=None):
+def suggest(s, days=7, per_account=None, only=None):
     """A proposal: for every connected channel, the next free slots filled with videos of the types it takes."""
     import publish_hub as hub
-    accs = [a for a in hub.accounts(s) if a['status'] == 'connected']
+    accs = [a for a in hub.accounts(s) if a['status'] == 'connected' and (only is None or a['id'] in only)]
     floor = auto_settings(s)['min_score']
     # Best first: the highest-scored video takes the next free slot. A video below the floor or an unchecked story is never proposed.
     vids = sorted([v for v in hub.videos(s) if not v['hidden'] and (not v.get('quality') or v['quality']['status'] == 'verified') and v.get('score', 0) >= floor],
@@ -215,17 +215,54 @@ def auto_settings(s):
                 ahead_hours=int(data.get('ahead_hours') or 24))
 
 
-def auto_save(s, enabled=None, min_score=None):
+def auto_save(s, enabled=None, min_score=None, account=None):
+    """enabled switches the automatic scheduling of ONE channel (account) or, without account, of all channels; min_score is the same for all."""
+    import publish_hub as hub
+    hub.schema(s)
     cur = auto_settings(s)
-    if enabled is not None:
-        cur['enabled'] = enabled is True
     if min_score is not None:
         if not isinstance(min_score, (int, float)) or isinstance(min_score, bool) or not 0 <= min_score <= 100:
             raise ValueError('A legalacsonyabb pontszám 0-100 lehet.')
         cur['min_score'] = int(min_score)
-    (s.root / AUTO_FILE).write_text(json.dumps(cur))
+    if enabled is not None:
+        for row in s.rows("SELECT id FROM social_accounts" + (" WHERE id=?" if account else ''), ((account,) if account else ())):
+            save(s, row['id'], auto=enabled is True)
+    cur['enabled'] = any(settings(s, r)['auto'] for r in s.rows('SELECT * FROM social_accounts'))
+    (s.root / AUTO_FILE).write_text(json.dumps(dict(min_score=cur['min_score'], enabled=cur['enabled'], ahead_hours=cur['ahead_hours'])))
     _auto['at'] = 0
     return dict(auto=cur, message='Automatikus ütemezés: ' + ('be van kapcsolva.' if cur['enabled'] else 'ki van kapcsolva.'))
+
+
+def auto_accounts(s):
+    return [r['id'] for r in s.rows('SELECT * FROM social_accounts') if settings(s, r)['auto']]
+
+
+def upcoming(s, aid, vids, n=8):
+    """The channel's next n times: what is scheduled there (with the video's score) and which times are still empty."""
+    import publish_hub as hub
+    now = time.time()
+    score = {v['id']: v for v in vids}
+    rows = []
+    for p in s.rows("SELECT id,artifact,title,status,scheduled FROM social_posts WHERE account=? AND status IN ('scheduled','queued','uploading') AND COALESCE(scheduled,?)>? ORDER BY COALESCE(scheduled,?) LIMIT ?", (aid, now, now - 60, now, n)):
+        v = score.get(p['artifact']) or {}
+        rows.append(dict(when=p['scheduled'] or now, post=p['id'], title=p['title'] or v.get('title') or '', status=p['status'], score=v.get('score')))
+    taken, at = [], now
+    for _ in range(n):
+        try:
+            at = next_slot(s, aid, after=at + 1, taken=taken)
+        except ValueError:
+            break
+        taken.append(at)
+        rows.append(dict(when=at, post=None, title='', status='empty', score=None))
+    rows.sort(key=lambda r: r['when'])
+    return rows[:n]
+
+
+def fill(s, aid):
+    """One click: the best-scored checked videos go to this channel's empty next times (nothing is posted before its time)."""
+    out = apply(s, [i for i in suggest(s, days=3, only={aid})['items'] if i['when'] <= time.time() + 3 * 86400][:48])
+    out['message'] = (str(out['done']) + ' videó ütemezve erre a csatornára.') if out['done'] else 'Nincs mit ütemezni: egy ' + str(auto_settings(s)['min_score']) + ' pont feletti, ellenőrzött videó sem vár, vagy minden időpont foglalt.'
+    return out
 
 
 def auto_mark(s, ids):
@@ -256,7 +293,8 @@ def auto_tick(s, now=None):
     goes to the best checked video there is at that time. Each video goes once per channel, in the channel's own times and daily limit."""
     now = now or time.time()
     cfg = auto_settings(s)
-    if not cfg['enabled'] or now - _auto['at'] < 600:
+    chans = auto_accounts(s)
+    if not chans or now - _auto['at'] < 600:
         return 0
     _auto['at'] = now
     import publish_hub as hub
@@ -266,7 +304,7 @@ def auto_tick(s, now=None):
     if sig != _auto.get('sig'):
         auto_cancel_future(s, now)
         _auto['sig'] = sig
-    items = [i for i in suggest(s, days=3)['items'] if i['when'] <= now + cfg['ahead_hours'] * 3600]
+    items = [i for i in suggest(s, days=3, only=set(chans))['items'] if i['when'] <= now + cfg['ahead_hours'] * 3600]
     if not items:
         return 0
     out = apply(s, items)

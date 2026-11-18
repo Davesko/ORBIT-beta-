@@ -139,6 +139,8 @@ class ScoreTests(unittest.TestCase):
   with tempfile.TemporaryDirectory() as t:
    s=Studio(Path(t))
    self.assertFalse(pl.auto_settings(s)['enabled'])
+   import publish_hub as hh
+   hh.schema(s);aid=hh.account_add(s,'instagram','T')['id']
    pl.auto_save(s,True,60);self.assertEqual(pl.auto_settings(s),dict(enabled=True,min_score=60,ahead_hours=24))
    with self.assertRaises(ValueError):pl.auto_save(s,None,150)
    s.db.close()
@@ -201,3 +203,36 @@ class SlotTests(PublishHubTests):
   a=self.connected('instagram');pl.save(self.s,a,every=dict(hours=2,start='00:00',end='22:00'))
   first=pl.next_slot(self.s,a);second=pl.next_slot(self.s,a,after=first+60)
   self.assertEqual(round((second-first)/3600),2)
+
+
+class ChannelPlanTests(PublishHubTests):
+ def test_the_daily_limit_is_the_number_of_times_and_auto_is_per_channel(self):
+  import publish_plan as pl
+  a=self.connected('instagram');b=self.connected('tiktok')
+  pl.save(self.s,a,every=dict(hours=2,start='00:00',end='22:00'))
+  accs={x['id']:x for x in hub.accounts(self.s)}
+  self.assertEqual(accs[a]['per_day'],12)
+  self.assertFalse(accs[a]['auto'])
+  pl.auto_save(self.s,True,None,a)
+  self.assertEqual(pl.auto_accounts(self.s),[a])
+  self.assertTrue(pl.auto_settings(self.s)['enabled'])
+  pl.auto_save(self.s,False,None,a)
+  self.assertEqual(pl.auto_accounts(self.s),[]);self.assertFalse(pl.auto_settings(self.s)['enabled'])
+ def test_upcoming_lists_scheduled_and_empty_times_in_order(self):
+  import publish_plan as pl
+  a=self.connected('instagram');pl.save(self.s,a,every=dict(hours=2,start='00:00',end='22:00'))
+  first=pl.next_slot(self.s,a)
+  hub.post(self.s,'vid',[a],'Cím','sz',when=first)
+  rows=pl.upcoming(self.s,a,hub.videos(self.s),n=5)
+  self.assertEqual(len(rows),5)
+  self.assertEqual([r['status'] for r in rows][:1],['scheduled'])
+  self.assertTrue(all(r['status']=='empty' for r in rows[1:]))
+  self.assertEqual(sorted(r['when'] for r in rows),[r['when'] for r in rows])
+ def test_two_hour_rhythm_fills_every_slot_not_ten_of_twelve(self):
+  import publish_plan as pl
+  a=self.connected('instagram');pl.save(self.s,a,every=dict(hours=2,start='00:00',end='22:00'))
+  taken=[];at=0
+  for _ in range(12):
+   at=pl.next_slot(self.s,a,after=at+1,taken=taken);taken.append(at)
+  days={time.strftime('%Y-%m-%d',time.localtime(x)) for x in taken}
+  self.assertLessEqual(len(days),2)                      # 12 consecutive slots span at most two calendar days
