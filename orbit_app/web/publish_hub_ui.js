@@ -250,9 +250,13 @@
    if(a.status==='connected'){
     const sw=el('label','ap-hub-switch');const cb=el('input');cb.type='checkbox';cb.checked=!!a.auto;
     cb.onchange=()=>act(async()=>{const r=await op('publish_auto',{enabled:cb.checked,account:a.id});toast(cb.checked?'Be: ide magától ütemezi a legjobb videókat.':'Ki: ide nem ütemez magától.');await load(true);});
-    sw.append(cb,el('span','','Automatikus'));sw.title='Be: a legjobb pontszámú videó magától a következő üres időpontra kerül.';head.append(sw);}
+    sw.append(cb,el('span','','Automatikus'));sw.title='Be: a legjobb pontszámú videó magától a következő üres időpontra kerül.';head.append(sw);
+    const bw=el('label','ap-hub-switch');const bb=el('input');bb.type='checkbox';bb.checked=a.best!==false;
+    bb.onchange=()=>act(async()=>{const r=await op('publish_best',{account:a.id,enabled:bb.checked});toast(r.message);await load(true);});
+    bw.append(bb,el('span','','Mindig a legjobb'));bw.title='Be: ha a kiküldés előtt jön egy jobb pontszámú videó, az ütemezett gyengébbet kicseréli rá (a kiküldés előtt 30 percig). A kézzel ütemezett posztokhoz nem nyúl.';head.append(bw);}
    lane.append(head);
    lane.append(el('p','hub-rhythm','🕒 '+rhythm(a.slots)+' · '+a.slots.length+' videó naponta'));
+   if(a.status==='connected')lane.append(el('p','hint',(a.best!==false?'Mindig a legjobb: ha jön jobb pontszámú videó, kicseréli az ütemezettet a kiküldés előtt 30 percig. ':'Mindig a legjobb ki van kapcsolva: az ütemezett videók maradnak. ')+'A kézzel ütemezett posztokhoz nem nyúl.'));
    const chips=el('div','hub-slotchips');for(const t of a.slots)chips.append(el('span','hub-slotchip',t));lane.append(chips);
    const row=el('div','hub-row');row.append(button('Időpontok módosítása',()=>planDialog(a),'secondary'));
    if(a.status==='connected'&&!a.auto)row.append(button('✦ Kitöltés a legjobb videókkal',()=>act(async()=>{const r=await op('publish_plan_fill',{account:a.id});toast(r.message,!r.done);await load(true);})));

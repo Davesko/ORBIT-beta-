@@ -29,7 +29,7 @@ def settings(s, row, types_from_routes=None):
     if types is None:
         types = types_from_routes or []
     slots = sorted(set(slots)) or ['18:00']
-    return dict(slots=slots, per_day=len(slots), types=list(types), auto=m.get('auto') is True)      # one post per time: the daily limit is the number of times
+    return dict(slots=slots, per_day=len(slots), types=list(types), auto=m.get('auto') is True, best=m.get('best') is not False)      # one post per time: the daily limit is the number of times
 
 
 def parse_slots(items):
@@ -58,7 +58,7 @@ def every_slots(hours, start='00:00', end='23:59'):
     return out
 
 
-def save(s, aid, slots=None, per_day=None, types=None, every=None, auto=None):
+def save(s, aid, slots=None, per_day=None, types=None, every=None, auto=None, best=None):
     import publish_hub as hub
     import publish_library as lib
     row = hub.account(s, aid)
@@ -75,6 +75,8 @@ def save(s, aid, slots=None, per_day=None, types=None, every=None, auto=None):
     m.pop('per_day', None)          # kept only for old data: the daily limit is the number of times
     if auto is not None:
         m['auto'] = auto is True
+    if best is not None:
+        m['best'] = best is True
     if types is not None:
         if not isinstance(types, list) or set(types) - set(lib.TYPE_IDS):
             raise ValueError('Ismeretlen videótípus.')
@@ -261,6 +263,7 @@ def upcoming(s, aid, vids, n=8):
 def fill(s, aid):
     """One click: the best-scored checked videos go to this channel's empty next times (nothing is posted before its time)."""
     out = apply(s, [i for i in suggest(s, days=3, only={aid})['items'] if i['when'] <= time.time() + 3 * 86400][:48])
+    auto_mark(s, out.get('ids', []))
     out['message'] = (str(out['done']) + ' videó ütemezve erre a csatornára.') if out['done'] else 'Nincs mit ütemezni: egy ' + str(auto_settings(s)['min_score']) + ' pont feletti, ellenőrzött videó sem vár, vagy minden időpont foglalt.'
     return out
 
@@ -297,16 +300,56 @@ def auto_tick(s, now=None):
     if not chans or now - _auto['at'] < 600:
         return 0
     _auto['at'] = now
-    import publish_hub as hub
-    floor = cfg['min_score']
-    pool = [v for v in hub.videos(s) if not v['hidden'] and v.get('score', 0) >= floor and v['state'] in ('new', 'scheduled') and (not v.get('quality') or v['quality']['status'] == 'verified')]
-    sig = (len(pool), max([v.get('created') or 0 for v in pool] or [0]), tuple(sorted(v['id'] for v in pool))[:40])
-    if sig != _auto.get('sig'):
-        auto_cancel_future(s, now)
-        _auto['sig'] = sig
     items = [i for i in suggest(s, days=3, only=set(chans))['items'] if i['when'] <= now + cfg['ahead_hours'] * 3600]
     if not items:
         return 0
     out = apply(s, items)
     auto_mark(s, out.get('ids', []))
     return out['done']
+
+
+_best = {'at': 0}
+
+
+def rebalance(s, now=None, keep_minutes=30, max_swaps=5):
+    """'Always the best': a time that the ORBIT filled (automatic or by the fill button) and that is still more than half an hour away goes to
+    the best video there is: when a checked video that scores (and is fresh) clearly better than a scheduled one turns up, it takes that time and the
+    weaker one is taken back. Posts the owner scheduled by hand are never touched. Runs every five minutes."""
+    now = now or time.time()
+    if now - _best['at'] < 300:
+        return 0
+    _best['at'] = now
+    import publish_hub as hub
+    hub.schema(s)
+    s.db.execute('CREATE TABLE IF NOT EXISTS social_auto(post TEXT PRIMARY KEY,created REAL)')
+    floor = auto_settings(s)['min_score']
+    accounts = [a for a in hub.accounts(s) if a['status'] == 'connected' and a.get('best')]
+    if not accounts:
+        return 0
+    vids = hub.videos(s)
+    byid = {v['id']: v for v in vids}
+    pool = [v for v in vids if not v['hidden'] and v.get('score', 0) >= floor and (not v.get('quality') or v['quality']['status'] == 'verified')]
+    rank = lambda v: (v.get('score', 0) * freshness(v, now)) if v else -1.0
+    swaps = 0
+    for acc in accounts:
+        mine = s.rows("SELECT p.id,p.artifact,p.scheduled FROM social_posts p JOIN social_auto a ON a.post=p.id WHERE p.account=? AND p.status='scheduled' AND p.scheduled>?", (acc['id'], now + keep_minutes * 60))
+        if not mine:
+            continue
+        used = {r['artifact'] for r in s.rows("SELECT artifact FROM social_posts WHERE account=? AND status IN ('queued','uploading','scheduled','published')", (acc['id'],))}
+        cands = sorted([v for v in pool if v['id'] not in used and v['type'] in acc['types'] and (acc['platform'] == 'youtube' or v['short'] is not False)], key=lambda v: -rank(v))
+        for r in sorted(mine, key=lambda r: rank(byid.get(r['artifact']))):
+            if not cands or swaps >= max_swaps:
+                break
+            best = cands[0]
+            if rank(best) <= rank(byid.get(r['artifact'])) * 1.05 + 0.01:
+                break
+            try:
+                hub.cancel(s, r['id'])
+                text = best['variants'].get(acc['platform']) or dict(title=best['title'], caption=best['caption'])
+                out = hub.post(s, best['id'], None, '', '', 'public', False, None, plan=[dict(account=acc['id'], when=r['scheduled'], title=text['title'], caption=text['caption'])])
+                auto_mark(s, [p['id'] for p in out['posts'] if not p['existing']])
+            except ValueError:
+                continue
+            cands.pop(0)
+            swaps += 1
+    return swaps

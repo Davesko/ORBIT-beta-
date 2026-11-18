@@ -236,3 +236,46 @@ class ChannelPlanTests(PublishHubTests):
    at=pl.next_slot(self.s,a,after=at+1,taken=taken);taken.append(at)
   days={time.strftime('%Y-%m-%d',time.localtime(x)) for x in taken}
   self.assertLessEqual(len(days),2)                      # 12 consecutive slots span at most two calendar days
+
+
+class BestSwapTests(PublishHubTests):
+ def video(self,vid,score,age_h=1):
+  return dict(id=vid,hidden=False,score=score,quality=None,created=time.time()-age_h*3600,type='clip',short=True,title=vid,caption='c',variants=dict(instagram=dict(title=vid,caption='c')),posts=[])
+ def setup_channel(self):
+  import publish_plan as pl
+  a=self.connected('instagram');pl.save(self.s,a,types=['clip'],every=dict(hours=2,start='00:00',end='22:00'))
+  p2=self.s.safe_path('universe','renders/b.mp4');p2.write_bytes(b'video');p2.with_suffix('.json').write_text(json.dumps(dict(width=1080,height=1920,duration=30,bytes=5)))
+  self.s.db.execute('INSERT INTO artifacts VALUES(?,?,?,?,?,?,?)',('vid2','universe','b.mp4',str(p2),'video',time.time(),'render'));self.s.db.commit()
+  return a
+ def test_a_better_video_takes_the_scheduled_time_of_a_weaker_one(self):
+  import publish_plan as pl
+  from unittest.mock import patch
+  a=self.setup_channel()
+  when=time.time()+4*3600
+  pid=hub.post(self.s,'vid',[a],'Cím','sz',when=when)['posts'][0]['id'];pl.auto_mark(self.s,[pid])
+  pl._best['at']=0
+  with patch.object(hub,'videos',return_value=[self.video('vid',60),self.video('vid2',90)]):
+   n=pl.rebalance(self.s,time.time())
+  self.assertEqual(n,1)
+  rows={r['artifact']:r for r in self.s.rows("SELECT artifact,status,scheduled FROM social_posts WHERE account=?",(a,))}
+  self.assertNotIn('vid',rows)                      # the weaker one was taken back
+  self.assertEqual(rows['vid2']['status'],'scheduled');self.assertAlmostEqual(rows['vid2']['scheduled'],when,delta=1)
+ def test_hand_scheduled_posts_and_slots_close_to_the_time_are_never_swapped(self):
+  import publish_plan as pl
+  from unittest.mock import patch
+  a=self.setup_channel()
+  hub.post(self.s,'vid',[a],'Cím','sz',when=time.time()+4*3600)            # by hand: not marked
+  pl._best['at']=0
+  with patch.object(hub,'videos',return_value=[self.video('vid',60),self.video('vid2',95)]):
+   self.assertEqual(pl.rebalance(self.s,time.time()),0)
+  pid=self.s.db.execute("SELECT id FROM social_posts WHERE account=?",(a,)).fetchone()[0]
+  self.s.db.execute("UPDATE social_posts SET scheduled=? WHERE id=?",(time.time()+600,pid));self.s.db.commit();pl.auto_mark(self.s,[pid]);pl._best['at']=0
+  with patch.object(hub,'videos',return_value=[self.video('vid',60),self.video('vid2',95)]):
+   self.assertEqual(pl.rebalance(self.s,time.time()),0)                     # ten minutes away: on its way out
+ def test_the_setting_can_be_switched_off_per_channel(self):
+  import publish_plan as pl
+  from unittest.mock import patch
+  a=self.setup_channel();pl.save(self.s,a,best=False)
+  when=time.time()+4*3600;pid=hub.post(self.s,'vid',[a],'Cím','sz',when=when)['posts'][0]['id'];pl.auto_mark(self.s,[pid]);pl._best['at']=0
+  with patch.object(hub,'videos',return_value=[self.video('vid',60),self.video('vid2',95)]):
+   self.assertEqual(pl.rebalance(self.s,time.time()),0)

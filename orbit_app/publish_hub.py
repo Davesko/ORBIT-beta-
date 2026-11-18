@@ -619,6 +619,7 @@ def tick(s, now=None):
     try:
         if not held:
             plan.auto_tick(s, now)
+            plan.rebalance(s, now)
     except Exception:
         pass   # a planning error must never stop scheduled posts
     try:
@@ -674,6 +675,8 @@ def dispatch(s, op, args=None):
         return plan.save(s, args.get('id'), args.get('slots'), None, args.get('types'), args.get('every'), args.get('auto') if 'auto' in args else None)
     if op == 'publish_plan_suggest':
         return plan.suggest(s, int(args.get('days') or 7))
+    if op == 'publish_best':
+        return plan.save(s, args.get('account'), best=args.get('enabled') is True) | dict(message='Mindig a legjobb: ' + ('be.' if args.get('enabled') is True else 'ki.'))
     if op == 'publish_plan_fill':
         return plan.fill(s, args.get('account'))
     if op == 'publish_plan_apply':
